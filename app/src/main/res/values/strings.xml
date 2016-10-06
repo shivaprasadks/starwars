@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">starwars</string>
+    <string name="ship_name">ship_name</string>
+    <string name="film_name">Film :</string>
+    <string name="Desc">Description</string>
+    <string name="ship_cost">Cost:</string>
+</resources>

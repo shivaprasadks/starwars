@@ -1,6 +1,6 @@
 package com.think.starwars;
 
-import android.app.Dialog;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -10,15 +10,8 @@ import android.os.AsyncTask;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -30,7 +23,6 @@ import com.think.starwars.model.StarShipData;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -38,12 +30,10 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -70,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
                     "http://swapi.co/api/starships/?format=json&page=3", "http://swapi.co/api/starships/?format=json&page=4",
                     "http://swapi.co/api/films/?format=json");
         } else {
-            Toast.makeText(MainActivity.this,"Not Internet Connectivity",Toast.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.this, "Not Internet Connectivity", Toast.LENGTH_LONG).show();
         }
 
 
@@ -121,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
                         filmData.film_name = json_data.getString("title");
                         filmData.episode = json_data.getString("episode_id");
                         filmData.series = i + 1;
+                        filmData.url_link = json_data.getString("url");
 
                         film_data.add(filmData);
                     }
@@ -159,8 +150,11 @@ public class MainActivity extends AppCompatActivity {
 
                             //  JSONObject film_nameOBJ = jarray_films.getJSONObject(k);
                             String str = jarray_films.getString(k);
-                            str = String.valueOf(str.charAt(str.length() - 2));
-                            str_film_name += film_data.get(Integer.parseInt(str) - 1).film_name + "\n";
+                            for (int j = 0; j < film_data.size(); j++) {
+                                if (film_data.get(j).url_link.equals(str))
+                                    str_film_name += film_data.get(j).film_name + "\n";
+                            }
+
 
                         }
                         shipData.movie_name = str_film_name;
@@ -191,8 +185,10 @@ public class MainActivity extends AppCompatActivity {
 
                             //  JSONObject film_nameOBJ = jarray_films.getJSONObject(k);
                             String str = jarray_films.getString(k);
-                            str = String.valueOf(str.charAt(str.length() - 2));
-                            str_film_name += film_data.get(Integer.parseInt(str) - 1).film_name + "\n";
+                            for (int j = 0; j < film_data.size(); j++) {
+                                if (film_data.get(j).url_link.equals(str))
+                                    str_film_name += film_data.get(j).film_name + "\n";
+                            }
                         }
                         shipData.movie_name = str_film_name;
                         String temp_cost = json_data.getString("cost_in_credits");
@@ -225,8 +221,10 @@ public class MainActivity extends AppCompatActivity {
 
                             //  JSONObject film_nameOBJ = jarray_films.getJSONObject(k);
                             String str = jarray_films.getString(k);
-                            str = String.valueOf(str.charAt(str.length() - 2));
-                            str_film_name += film_data.get(Integer.parseInt(str) - 1).film_name + "\n";
+                            for (int j = 0; j < film_data.size(); j++) {
+                                if (film_data.get(j).url_link.equals(str))
+                                    str_film_name += film_data.get(j).film_name + "\n";
+                            }
                         }
                         shipData.movie_name = str_film_name;
                         String temp_cost = json_data.getString("cost_in_credits");
@@ -260,8 +258,10 @@ public class MainActivity extends AppCompatActivity {
 
                             //  JSONObject film_nameOBJ = jarray_films.getJSONObject(k);
                             String str = jarray_films.getString(k);
-                            str = String.valueOf(str.charAt(str.length() - 2));
-                            str_film_name += film_data.get(Integer.parseInt(str) - 1).film_name + "\n";
+                            for (int j = 0; j < film_data.size(); j++) {
+                                if (film_data.get(j).url_link.equals(str))
+                                    str_film_name += film_data.get(j).film_name + "\n";
+                            }
                         }
                         shipData.movie_name = str_film_name;
                         String temp_cost = json_data.getString("cost_in_credits");
@@ -295,7 +295,9 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public int compare(StarShipData cost2, StarShipData cost1) {
 
-                        return (int) (Long.parseLong(cost1.ship_cost) - (Long.parseLong((cost2.ship_cost))));
+                            return (int) (new BigInteger(cost1.ship_cost).compareTo(new BigInteger(cost2.ship_cost)));
+
+
                     }
                 });
 
@@ -307,7 +309,7 @@ public class MainActivity extends AppCompatActivity {
                 shipList.setLayoutManager(layoutManager);
 
             } else {
-                Toast.makeText(MainActivity.this, "cant retrive", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Error in retriving the data", Toast.LENGTH_SHORT).show();
 
             }
 

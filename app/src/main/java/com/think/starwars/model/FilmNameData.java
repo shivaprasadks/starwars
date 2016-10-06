@@ -8,4 +8,5 @@ public class FilmNameData {
     public String film_name;
     public String episode;
     public int series;
+    public String url_link;
 }

@@ -2,7 +2,10 @@ package com.think.starwars;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -62,12 +65,22 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         shipList = (RecyclerView) findViewById(R.id.shipDetail_list);
+        if (isNetworkAvailable()) {
+            new GetCartAsync().execute("http://swapi.co/api/starships/?format=json&page=1", "http://swapi.co/api/starships/?format=json&page=2",
+                    "http://swapi.co/api/starships/?format=json&page=3", "http://swapi.co/api/starships/?format=json&page=4",
+                    "http://swapi.co/api/films/?format=json");
+        } else {
+            Toast.makeText(MainActivity.this,"Not Internet Connectivity",Toast.LENGTH_LONG).show();
+        }
 
-        new GetCartAsync().execute("http://swapi.co/api/starships/?format=json&page=1", "http://swapi.co/api/starships/?format=json&page=2",
-                "http://swapi.co/api/starships/?format=json&page=3", "http://swapi.co/api/starships/?format=json&page=4",
-                "http://swapi.co/api/films/?format=json");
 
+    }
 
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     private class GetCartAsync extends AsyncTask<String, Void, Boolean> {
@@ -112,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
                         film_data.add(filmData);
                     }
                     // return true;
-                    
+
                 }
                 //------------------>>
                 HttpGet httppost = new HttpGet(urls[0]);
